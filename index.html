@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sohaib Sarosh Shamsi</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/fb4e74d6cb.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <div id="header">
+        <div class="container">
+            <nav>
+                <img class="logo" src="images/sohaib-logo.png" alt="logo">
+                <ul id="sidemenu">
+                    <li><a href="#header">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#portfolio">Portfolio</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <i class="fas fa-times" onclick="closemenu()"></i>
+                </ul>
+                <i class="fas fa-bars" onclick="openmenu()"></i>
+            </nav>
+            <div class="header-text">
+                <p>Full Stack Developer</p>
+                <h1>Hi, I'm <span class="span1">Sohaib Shamsi</span><br> from Pakistan.</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- -------------------------about--------------------- -->
+    <div id="about">
+        <div class="container">
+            <div class="row">
+                <div class="about-col-1">
+                    <img src="/images/AD-2022.jpg" alt="sohaib-ad-22">
+                </div>
+                <div class="about-col-2">
+                    <h1 class="subtitle">About me</h1>
+                    <p>I am a successful web developer with a proven track record of crafting dynamic and user-friendly websites. With a passion for coding and a creative mindset, I specialize in turning complex concepts into elegant digital solutions. With a strong grasp of modern programming languages and frameworks, I have consistently delivered high-quality websites that seamlessly blend functionality with aesthetics. My ability to collaborate with clients, understand their unique needs, and translate them into captivating online experiences has been a key factor in my success. I am committed to staying at the forefront of web development trends, ensuring that my work remains innovative and impactful</p>
+
+                    <div class="tab-titles">
+                        <p class="tab-links active-link" onclick="opentab('skills')">Skills</p>
+                        <p class="tab-links" onclick="opentab('experience')">Experience</p>
+                        <p class="tab-links" onclick="opentab('education')">Education</p>
+                    </div>
+                    <div class="tab-contents active-tab" id="skills">
+                        <ul>
+                            <li><span>UI/UX</span><br>Designing Web/App interface</li>
+                            <li><span>Web Development</span><br>Web app Development</li>
+                            <li><span>App Development</span><br>Building Android/IOS apps</li>
+                        </ul>
+                    </div>
+                    <div class="tab-contents" id="experience">
+                        <ul>
+                            <li><span>Sayabi Dev</span><br>Web Developer Intern</li>
+                            <li><span>Mindstorm Studios</span><br>Game Developer Intern</li>
+                            <li><span>MediTechx</span><br>Marketing Intern</li>
+                        </ul>
+                    </div>
+                    <div class="tab-contents" id="education">
+                        <ul>
+                            <li><span>Bachelors in Computer Science</span><br>Fast National University</li>
+                            <li><span>Alevels</span><br>Roots Millennium College</li>
+                            <li><span>Olevels</span><br>Beaconhouse School System</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- --------services------------- -->
+
+    <div id="services">
+        <div class="container">
+            <h1 class="sub-title">My Services</h1>
+            <div class="services-list">
+                <div>
+                    <i class="fa-solid fa-code"></i>
+                    <h2>Web Design</h2>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum dolorem, perferendis inventore at
+                        repellendus ducimus doloremque quos corporis porro molestiae dolores temporibus ipsum sapiente
+                        modi expedita, iste saepe quas itaque.</p>
+                    <a href="#">Learn More</a>
+                </div>
+                <div>
+                    <i class="fa-solid fa-crop-simple"></i>
+                    <h2>UI/UX Design</h2>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum dolorem, perferendis inventore at
+                        repellendus ducimus doloremque quos corporis porro molestiae dolores temporibus ipsum sapiente
+                        modi expedita, iste saepe quas itaque.</p>
+                    <a href="#">Learn More</a>
+                </div>
+                <div>
+                    <i class="fa-brands fa-app-store"></i>
+                    <h2>App Design</h2>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum dolorem, perferendis inventore at
+                        repellendus ducimus doloremque quos corporis porro molestiae dolores temporibus ipsum sapiente
+                        modi expedita, iste saepe quas itaque.</p>
+                    <a href="#">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- --------Portfolio------------- -->
+
+    <div id="portfolio">
+        <div class="container">
+            <h1 class="sub-title">My Work</h1>
+            <div class="work-list">
+                <div class="work">
+                    <img src="images/work-1.png" alt="work1">
+                    <div class="layer">
+                        <h3>Social Media App</h3>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio provident reiciendis vero,
+                            dolor aliquam perspiciatis ab delectus, libero autem assumenda dolores natus nam iste,
+                            voluptatem aliquid temporibus voluptatum facilis maiores.</p>
+                        <a href="#"><i class="fa-solid fa-up-right-from-square"></i></a>
+                    </div>
+                </div>
+                <div class="work">
+                    <img src="images/work-2.png" alt="work1">
+                    <div class="layer">
+                        <h3>Music App</h3>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio provident reiciendis vero,
+                            dolor aliquam perspiciatis ab delectus, libero autem assumenda dolores natus nam iste,
+                            voluptatem aliquid temporibus voluptatum facilis maiores.</p>
+                        <a href="#"><i class="fa-solid fa-up-right-from-square"></i></a>
+                    </div>
+                </div>
+                <div class="work">
+                    <img src="images/work-3.png" alt="work1">
+                    <div class="layer">
+                        <h3>Online Shopping App</h3>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio provident reiciendis vero,
+                            dolor aliquam perspiciatis ab delectus, libero autem assumenda dolores natus nam iste,
+                            voluptatem aliquid temporibus voluptatum facilis maiores.</p>
+                        <a href="#"><i class="fa-solid fa-up-right-from-square"></i></a>
+                    </div>
+                </div>
+            </div>
+            <a class="btn" href="#">See more</a>
+        </div>
+
+
+        <!-- ---------------------contact--------------------- -->
+        <div id="contact">
+            <div class="container">
+                <div class="row">
+                    <div class="contact-left">
+                        <h1 class="subtitle">Contact Me</h1>
+                        <p><i class="fa fa-paper-plane"></i>sohaib1083@gmail.com</p>
+                        <p><i class="fa fa-phone"></i>03330220803</p>
+                        <div class="social-icons">
+                            <a href="https://web.facebook.com/sohaib.s.shamsi/"><i
+                                    class="fa-brands fa-facebook"></i></a>
+                            <a href="https://twitter.com/Sohaib1083"><i class="fa-brands fa-twitter"></i></i></a>
+                            <a href="https://www.instagram.com/sohaibkimarzi/"><i
+                                    class="fa-brands fa-instagram"></i></i></a>
+                            <a href="https://www.linkedin.com/in/sohaib1083/"><i
+                                    class="fa-brands fa-linkedin"></i></i></a>
+                        </div>
+                        <a href="images/my-cv.pdf" download class="btn btn2">Download CV</a>
+                    </div>
+                    <div class="contact-right">
+                        <form>
+                            <input type="text" id="name" name="Name" placeholder="Your Name" required>
+                            <input type="email" id="email" placeholder="Your Email" required>
+                            <textarea name="Message" rows="6" placeholder="Your Message" required></textarea>
+                            <button type="Submit" class="btn btn2">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="copyright">
+            <p>Copyright @Sohaib Shamsi with <i class="fas fa-heart"> </i></p>
+        </div>
+
+
+
+
+        <script>
+            var tablinks = document.getElementsByClassName("tab-links");
+            var tabcontents = document.getElementsByClassName("tab-contents");
+            function opentab(tabname) {
+
+                for (tablink of tablinks) {
+                    tablink.classList.remove('active-link')
+                }
+
+                for (tabcontent of tabcontents) {
+                    tabcontent.classList.remove('active-tab')
+                }
+
+                event.currentTarget.classList.add("active-link");
+                document.getElementById(tabname).classList.add('active-tab');
+            }
+
+
+        </script>
+
+        <script>
+            var sidemenu = document.getElementById("sidemenu");
+            function openmenu() {
+                sidemenu.style.right = "0";
+            }
+            function closemenu() {
+                sidemenu.style.right = "-200px";
+            }
+        </script>
+</body>
+
+</html>
