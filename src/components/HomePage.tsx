@@ -258,7 +258,7 @@ export default function HomePage() {
             <Reveal className="mx-auto lg:mx-0">
               <div className="relative rounded-2xl overflow-hidden aspect-[3/4] w-full max-w-[350px]">
                 <Image
-                  src="/assets/AD-2022 (1).jpg"
+                  src="/assets/image copy.png"
                   alt="Sohaib Shamsi"
                   fill
                   className="object-cover transition-transform duration-500 hover:scale-[1.03]"
