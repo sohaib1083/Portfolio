@@ -294,7 +294,7 @@ export default function HomePage() {
                 <strong className="text-text-primary">Artificial Intelligence, Machine Learning, and Full-Stack Engineering</strong>.
               </p>
               <p className="text-text-secondary mb-4">
-                I specialize in designing and deploying end-to-end AI pipelines—from data ingestion and model training to production APIs and scalable infrastructure. My work spans fraud detection systems, NLP engines, recommendation algorithms, reinforcement learning environments, and distributed data architectures.
+                I specialize in designing and deploying end-to-end AI pipelines: from data ingestion and model training to production APIs and scalable infrastructure. My work spans fraud detection systems, NLP engines, recommendation algorithms, reinforcement learning environments, and distributed data architectures.
               </p>
               <p className="text-text-secondary mb-8">
                 Beyond code, I mentor aspiring AI engineers, compete in programming contests (IEEE Xtreme — Top 10 nationally), and regularly publish technical content on system design and ML engineering.

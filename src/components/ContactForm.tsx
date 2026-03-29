@@ -3,27 +3,39 @@
 import { useState } from "react";
 
 export default function ContactForm() {
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
-    const name = data.get("name") as string;
-    const email = data.get("email") as string;
-    const subject = data.get("subject") as string;
-    const message = data.get("message") as string;
 
-    const mailto = `mailto:sohaib1083@gmail.com?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
-    window.open(mailto, "_blank");
+    setStatus("loading");
 
-    setSent(true);
-    setTimeout(() => {
-      setSent(false);
-      form.reset();
-    }, 3000);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          subject: data.get("subject"),
+          message: data.get("message"),
+        }),
+      });
+
+      if (res.ok) {
+        setStatus("sent");
+        form.reset();
+        setTimeout(() => setStatus("idle"), 4000);
+      } else {
+        setStatus("error");
+        setTimeout(() => setStatus("idle"), 4000);
+      }
+    } catch {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 4000);
+    }
   };
 
   return (
@@ -88,16 +100,39 @@ export default function ContactForm() {
         <div className="form-line absolute bottom-0 left-0 w-0 h-[2px] bg-linear-to-r from-accent-indigo to-accent-cyan transition-all duration-400" />
       </div>
 
+      {status === "error" && (
+        <p className="text-red-400 text-sm text-center -mt-2">
+          Something went wrong. Please try again.
+        </p>
+      )}
+
       <button
         type="submit"
-        className={`w-full py-3.5 px-8 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-300 ${
-          sent
+        disabled={status === "loading" || status === "sent"}
+        className={`w-full py-3.5 px-8 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed ${
+          status === "sent"
             ? "bg-linear-to-r from-green-500 to-green-600 text-white"
+            : status === "error"
+            ? "bg-linear-to-r from-red-500 to-red-600 text-white"
             : "bg-linear-to-r from-accent-indigo to-accent-cyan text-white shadow-[0_4px_20px_rgba(99,102,241,0.3)] hover:shadow-[0_8px_30px_rgba(99,102,241,0.4)] hover:-translate-y-0.5"
         }`}
       >
-        <span>{sent ? "Message Sent!" : "Send Message"}</span>
-        <i className={sent ? "fa-solid fa-check" : "fa-solid fa-paper-plane"} />
+        {status === "loading" ? (
+          <>
+            <span>Sending…</span>
+            <i className="fa-solid fa-circle-notch fa-spin" />
+          </>
+        ) : status === "sent" ? (
+          <>
+            <span>Message Sent!</span>
+            <i className="fa-solid fa-check" />
+          </>
+        ) : (
+          <>
+            <span>Send Message</span>
+            <i className="fa-solid fa-paper-plane" />
+          </>
+        )}
       </button>
     </form>
   );
