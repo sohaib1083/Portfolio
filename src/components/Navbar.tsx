@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navItems = [
   { label: "About", href: "#about" },
   { label: "Skills", href: "#skills" },
   { label: "Projects", href: "#projects" },
   { label: "Experience", href: "#experience" },
+  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -16,6 +18,12 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const pathname = usePathname();
+
+  function isActive(href: string) {
+    if (href.startsWith("/")) return pathname === href || pathname.startsWith(href + "/");
+    return activeSection === href.slice(1);
+  }
 
   useEffect(() => {
     const onScroll = () => {
@@ -58,7 +66,7 @@ export default function Navbar() {
             key={item.href}
             href={item.href}
             className={`text-sm font-medium transition-colors relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:bg-gradient-to-r after:from-accent-indigo after:to-accent-cyan after:rounded-sm after:transition-all after:duration-300 ${
-              activeSection === item.href.slice(1)
+              isActive(item.href)
                 ? "text-text-primary after:w-full"
                 : "text-text-secondary hover:text-text-primary after:w-0 hover:after:w-full"
             }`}
