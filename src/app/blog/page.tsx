@@ -46,7 +46,7 @@ export default async function BlogPage() {
             </h1>
             <p className="text-text-secondary text-lg max-w-2xl mx-auto">
               Deep-dives into AI, ML systems, data engineering, and full-stack
-              development — written from the trenches.
+              development
             </p>
           </div>
         </section>
