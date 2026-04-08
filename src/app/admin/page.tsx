@@ -1,10 +1,21 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
-import { getAllPosts, type BlogPost } from "@/data/blog";
 
 // ─── Types ─────────────────────────────────────────
+
+interface BlogPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  readTime: number;
+  tags: string[];
+  category: string;
+  coverIcon: string;
+  coverGradient: string;
+}
 
 interface FormState {
   slug: string;
@@ -85,23 +96,42 @@ export default function AdminPage() {
   });
   const [authError, setAuthError] = useState("");
   const [view, setView] = useState<"list" | "new" | "edit">("list");
+  const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [preview, setPreview] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; msg: string } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [posts, setPosts] = useState<BlogPost[]>(() => {
-    if (typeof window === "undefined") return [];
-    const isAuthed = !!sessionStorage.getItem("admin_secret");
-    return isAuthed ? getAllPosts() : [];
-  });
+  const [editLoading, setEditLoading] = useState(false);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [deleteSlug, setDeleteSlug] = useState<string | null>(null);
+  const [postsLoading, setPostsLoading] = useState(false);
+
+  // ── Fetch posts from API ──────────────────────────
+
+  const fetchPosts = useCallback(async () => {
+    setPostsLoading(true);
+    try {
+      const res = await fetch("/api/blog");
+      if (res.ok) {
+        const data = await res.json();
+        setPosts(data);
+      }
+    } catch {
+      console.error("Failed to fetch posts");
+    } finally {
+      setPostsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authed) fetchPosts();
+  }, [authed, fetchPosts]);
 
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     if (!password.trim()) return;
     setSecret(password);
     setAuthed(true);
-    setPosts(getAllPosts());
     sessionStorage.setItem("admin_secret", password);
     setAuthError("");
   }
@@ -159,9 +189,9 @@ export default function AdminPage() {
     setLoading(false);
 
     if (res.ok) {
-      setStatus({ type: "success", msg: `✓ Post "${data.slug}" published! Rebuild the site to see it live.` });
+      setStatus({ type: "success", msg: `✓ Post "${data.slug}" published!` });
       setForm(EMPTY_FORM);
-      setPosts(getAllPosts());
+      await fetchPosts();
       setView("list");
     } else if (res.status === 401) {
       setAuthed(false);
@@ -183,10 +213,79 @@ export default function AdminPage() {
     setLoading(false);
     setDeleteSlug(null);
     if (res.ok) {
-      setStatus({ type: "success", msg: `Post "${slug}" deleted. Rebuild to apply.` });
+      setStatus({ type: "success", msg: `Post "${slug}" deleted.` });
       setPosts((prev) => prev.filter((p) => p.slug !== slug));
     } else {
       setStatus({ type: "error", msg: data.error ?? "Delete failed." });
+    }
+  }
+
+  async function handleEdit(slug: string) {
+    setEditLoading(true);
+    setStatus(null);
+    try {
+      const res = await fetch(`/api/blog/${slug}`);
+      if (!res.ok) throw new Error("Failed to load post");
+      const post = await res.json();
+      setForm({
+        slug: post.slug,
+        title: post.title,
+        excerpt: post.excerpt,
+        date: post.date,
+        readTime: post.readTime,
+        tags: (post.tags as string[]).join(", "),
+        category: post.category,
+        coverIcon: post.coverIcon,
+        coverGradient: post.coverGradient,
+        content: post.content,
+      });
+      setEditingSlug(slug);
+      setPreview(false);
+      setView("edit");
+    } catch {
+      setStatus({ type: "error", msg: "Could not load post for editing." });
+    } finally {
+      setEditLoading(false);
+    }
+  }
+
+  async function handleUpdate(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editingSlug) return;
+    setLoading(true);
+    setStatus(null);
+
+    const payload = {
+      secret,
+      originalSlug: editingSlug,
+      post: {
+        ...form,
+        tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+        readTime: Number(form.readTime),
+      },
+    };
+
+    const res = await fetch("/api/admin/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    setLoading(false);
+
+    if (res.ok) {
+      setStatus({ type: "success", msg: `✓ Post "${data.slug}" updated!` });
+      setEditingSlug(null);
+      setForm(EMPTY_FORM);
+      await fetchPosts();
+      setView("list");
+    } else if (res.status === 401) {
+      setAuthed(false);
+      sessionStorage.removeItem("admin_secret");
+      setAuthError("Wrong password — please log in again.");
+    } else {
+      setStatus({ type: "error", msg: data.error ?? "Update failed." });
     }
   }
 
@@ -228,11 +327,11 @@ export default function AdminPage() {
     <div className="min-h-screen bg-bg-primary text-text-primary">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-bg-primary/90 backdrop-blur-xl">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="font-display font-bold text-accent-indigo">
+            <Link href="/" className="font-display font-bold text-accent-indigo">
               &lt;SS/&gt;
-            </span>
+            </Link>
             <span className="text-text-muted text-sm">/ Admin</span>
           </div>
           <div className="flex items-center gap-4">
@@ -248,7 +347,7 @@ export default function AdminPage() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-10">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
         {/* Status banner */}
         {status && (
           <div
@@ -268,24 +367,34 @@ export default function AdminPage() {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-8">
-          <TabBtn active={view === "list"} onClick={() => setView("list")}>
+          <TabBtn active={view === "list"} onClick={() => { setView("list"); setEditingSlug(null); }}>
             <i className="fa-solid fa-list mr-2" />Posts ({posts.length})
           </TabBtn>
-          <TabBtn active={view === "new"} onClick={() => { setView("new"); setForm(EMPTY_FORM); setPreview(false); setStatus(null); }}>
+          <TabBtn active={view === "new"} onClick={() => { setView("new"); setEditingSlug(null); setForm(EMPTY_FORM); setPreview(false); setStatus(null); }}>
             <i className="fa-solid fa-plus mr-2" />New Post
           </TabBtn>
+          {view === "edit" && (
+            <div className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-accent-cyan/10 border border-accent-cyan/40 text-accent-cyan">
+              <i className="fa-solid fa-pen mr-2" />Editing Post
+            </div>
+          )}
         </div>
 
         {/* ── Post List ───────────────────────────────── */}
         {view === "list" && (
           <div className="flex flex-col gap-3">
-            {posts.length === 0 && (
+            {postsLoading && (
+              <p className="text-text-muted text-sm text-center py-12">
+                <i className="fa-solid fa-circle-notch fa-spin mr-2" />Loading posts...
+              </p>
+            )}
+            {!postsLoading && posts.length === 0 && (
               <p className="text-text-muted text-sm text-center py-12">No posts yet.</p>
             )}
             {posts.map((post) => (
               <div
                 key={post.slug}
-                className="glass-card p-5 flex items-center gap-4"
+                className="glass-card p-5 flex flex-col sm:flex-row sm:items-center gap-4"
               >
                 <div className={`w-11 h-11 rounded-lg bg-linear-to-br ${post.coverGradient} flex items-center justify-center shrink-0`}>
                   <i className={`${post.coverIcon} text-white/80`} />
@@ -305,6 +414,17 @@ export default function AdminPage() {
                     <i className="fa-solid fa-eye mr-1" />View
                   </Link>
                   <button
+                    onClick={() => handleEdit(post.slug)}
+                    disabled={editLoading}
+                    className="px-3 py-1.5 text-xs rounded-lg border border-border text-text-muted hover:text-accent-indigo hover:border-accent-indigo/40 transition-all disabled:opacity-40"
+                  >
+                    {editLoading ? (
+                      <i className="fa-solid fa-circle-notch fa-spin" />
+                    ) : (
+                      <><i className="fa-solid fa-pen mr-1" />Edit</>
+                    )}
+                  </button>
+                  <button
                     onClick={() => setDeleteSlug(post.slug)}
                     className="px-3 py-1.5 text-xs rounded-lg border border-border text-text-muted hover:text-red-400 hover:border-red-500/40 transition-all"
                   >
@@ -316,11 +436,17 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* ── New Post Form ────────────────────────────── */}
-        {view === "new" && (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        {/* ── New / Edit Post Form ─────────────────────── */}
+        {(view === "new" || view === "edit") && (
+          <form onSubmit={view === "edit" ? handleUpdate : handleSubmit} className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
-              <h2 className="font-display font-bold text-xl">New Post</h2>
+              <h2 className="font-display font-bold text-xl">
+                {view === "edit" ? (
+                  <><i className="fa-solid fa-pen mr-2 text-accent-cyan" />Edit Post</>
+                ) : (
+                  "New Post"
+                )}
+              </h2>
               <button
                 type="button"
                 onClick={() => setPreview(!preview)}
@@ -350,12 +476,18 @@ export default function AdminPage() {
               {/* Slug */}
               <div>
                 <Label>Slug</Label>
-                <Input
-                  value={form.slug}
-                  onChange={(v) => handleChange("slug", v)}
-                  placeholder="my-awesome-post"
-                  required
-                />
+                {view === "edit" ? (
+                  <div className="w-full bg-bg-secondary/50 border border-border rounded-lg px-4 py-3 text-text-muted text-sm font-mono cursor-not-allowed">
+                    {form.slug}
+                  </div>
+                ) : (
+                  <Input
+                    value={form.slug}
+                    onChange={(v) => handleChange("slug", v)}
+                    placeholder="my-awesome-post"
+                    required
+                  />
+                )}
                 <p className="text-text-muted text-xs mt-1">URL: /blog/{form.slug || "..."}</p>
               </div>
 
@@ -491,7 +623,7 @@ export default function AdminPage() {
             <div className="flex gap-3 justify-end pt-2 border-t border-border">
               <button
                 type="button"
-                onClick={() => setView("list")}
+                onClick={() => { setView("list"); setEditingSlug(null); }}
                 className="px-5 py-2.5 text-sm rounded-lg border border-border text-text-secondary hover:text-text-primary transition-colors"
               >
                 Cancel
@@ -499,10 +631,16 @@ export default function AdminPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2.5 text-sm rounded-lg bg-accent-indigo hover:bg-accent-indigo/80 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className={`px-6 py-2.5 text-sm rounded-lg text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 ${
+                  view === "edit"
+                    ? "bg-accent-cyan hover:bg-accent-cyan/80"
+                    : "bg-accent-indigo hover:bg-accent-indigo/80"
+                }`}
               >
                 {loading ? (
-                  <><i className="fa-solid fa-circle-notch fa-spin" /> Publishing...</>
+                  <><i className="fa-solid fa-circle-notch fa-spin" /> {view === "edit" ? "Saving..." : "Publishing..."}</>
+                ) : view === "edit" ? (
+                  <><i className="fa-solid fa-floppy-disk" /> Save Changes</>
                 ) : (
                   <><i className="fa-solid fa-paper-plane" /> Publish Post</>
                 )}
@@ -519,8 +657,7 @@ export default function AdminPage() {
             <i className="fa-solid fa-triangle-exclamation text-red-400 text-2xl mb-3 block" />
             <p className="font-semibold text-text-primary mb-2">Delete this post?</p>
             <p className="text-text-secondary text-sm mb-6">
-              <code className="text-accent-cyan">{deleteSlug}</code> will be permanently removed from{" "}
-              <code className="text-text-muted">blog.ts</code>.
+              <code className="text-accent-cyan">{deleteSlug}</code> will be permanently removed.
             </p>
             <div className="flex gap-3 justify-end">
               <button

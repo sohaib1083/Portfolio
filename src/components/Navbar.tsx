@@ -6,12 +6,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Projects", href: "#projects" },
-  { label: "Experience", href: "#experience" },
+  { label: "About", href: "/#about" },
+  { label: "Skills", href: "/#skills" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Experience", href: "/#experience" },
   { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export default function Navbar() {
@@ -20,9 +20,13 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("");
   const pathname = usePathname();
 
+  const isHomePage = pathname === "/";
+
   function isActive(href: string) {
-    if (href.startsWith("/")) return pathname === href || pathname.startsWith(href + "/");
-    return activeSection === href.slice(1);
+    if (href === "/blog") return pathname === "/blog" || pathname.startsWith("/blog/");
+    if (href.startsWith("/#")) return isHomePage && activeSection === href.slice(2);
+    if (href.startsWith("/")) return pathname === href;
+    return false;
   }
 
   useEffect(() => {
@@ -53,7 +57,7 @@ export default function Navbar() {
       style={{ backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
     >
       {/* Logo */}
-      <Link href="#hero" className="font-display text-xl font-bold tracking-tight">
+      <Link href="/" className="font-display text-xl font-bold tracking-tight">
         <span className="text-accent-indigo">&lt;</span>
         SS
         <span className="text-accent-indigo">/&gt;</span>

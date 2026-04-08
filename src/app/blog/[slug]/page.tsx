@@ -7,19 +7,17 @@ import {
   getPostBySlug,
   getAllPosts,
   formatDate,
-} from "@/data/blog";
+} from "@/lib/blog";
+
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  return getAllPosts().map((post) => ({ slug: post.slug }));
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) return { title: "Post Not Found" };
 
   return {
@@ -30,11 +28,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
 
   if (!post) notFound();
 
-  const allPosts = getAllPosts();
+  const allPosts = await getAllPosts();
   const currentIndex = allPosts.findIndex((p) => p.slug === slug);
   const prevPost = allPosts[currentIndex + 1] ?? null;
   const nextPost = allPosts[currentIndex - 1] ?? null;
@@ -47,11 +45,11 @@ export default async function BlogPostPage({ params }: Props) {
         <div
           className={`relative h-64 md:h-80 bg-linear-to-br ${post.coverGradient} flex items-center justify-center overflow-hidden`}
         >
-          <i className={`${post.coverIcon} text-[160px] text-white/10 absolute`} />
+          <i className={`${post.coverIcon} text-[120px] sm:text-[160px] text-white/10 absolute`} />
           <div className="absolute inset-0 bg-linear-to-t from-bg-primary via-bg-primary/50 to-transparent" />
 
           {/* Breadcrumb */}
-          <nav className="absolute top-6 left-6 md:left-10 flex items-center gap-2 text-sm text-white/60 z-10">
+          <nav className="absolute top-6 left-4 sm:left-6 md:left-10 flex items-center gap-2 text-sm text-white/60 z-10">
             <Link href="/" className="hover:text-white transition-colors">
               Home
             </Link>
@@ -60,16 +58,16 @@ export default async function BlogPostPage({ params }: Props) {
               Blog
             </Link>
             <i className="fa-solid fa-chevron-right text-xs" />
-            <span className="text-white/40 truncate max-w-50">{post.title}</span>
+            <span className="text-white/40 truncate max-w-32 sm:max-w-50">{post.title}</span>
           </nav>
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 -mt-24 relative z-10 pb-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 -mt-24 relative z-10 pb-24">
           <div className="flex flex-col lg:flex-row gap-12">
             {/* ─── Article ───────────────────────────────────── */}
             <article className="flex-1 min-w-0">
               {/* Header */}
-              <div className="glass-card p-8 mb-8">
+              <div className="glass-card p-6 sm:p-8 mb-8">
                 <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted mb-4">
                   <span className="px-3 py-1 rounded-full bg-accent-indigo/10 border border-accent-indigo/30 text-accent-indigo font-medium">
                     {post.category}
@@ -83,11 +81,11 @@ export default async function BlogPostPage({ params }: Props) {
                   </span>
                 </div>
 
-                <h1 className="font-display text-3xl md:text-4xl font-bold text-text-primary mb-4 leading-tight">
+                <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-text-primary mb-4 leading-tight">
                   {post.title}
                 </h1>
 
-                <p className="text-text-secondary text-lg leading-relaxed mb-6">
+                <p className="text-text-secondary text-base sm:text-lg leading-relaxed mb-6">
                   {post.excerpt}
                 </p>
 
@@ -105,7 +103,7 @@ export default async function BlogPostPage({ params }: Props) {
               </div>
 
               {/* Body */}
-              <div className="glass-card p-8">
+              <div className="glass-card p-6 sm:p-8">
                 <BlogPostContent content={post.content} />
               </div>
 
@@ -119,7 +117,7 @@ export default async function BlogPostPage({ params }: Props) {
                     Sohaib Sarosh Shamsi
                   </p>
                   <p className="text-sm text-text-secondary mt-0.5">
-                    Full-Stack & AI/ML Engineer — building intelligent systems.
+                    Full-Stack &amp; AI/ML Engineer — building intelligent systems.
                   </p>
                   <div className="flex gap-4 mt-2 text-xs">
                     <a
@@ -213,7 +211,7 @@ export default async function BlogPostPage({ params }: Props) {
                     More Posts
                   </h3>
                   <ul className="flex flex-col gap-4">
-                    {getAllPosts()
+                    {allPosts
                       .filter((p) => p.slug !== slug)
                       .slice(0, 3)
                       .map((p) => (

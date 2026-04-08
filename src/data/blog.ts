@@ -433,6 +433,33 @@ const item = {
 The full source is on [GitHub](https://github.com/sohaib1083).
 `,
   },
+  {
+    slug: "h",
+    title: "Hello",
+    excerpt: "hello",
+    date: "2026-04-08",
+    readTime: 5,
+    tags: [],
+    category: "AI",
+    coverIcon: "fa-solid fa-pen-nib",
+    coverGradient: "from-accent-indigo to-accent-violet",
+    content: `## Introduction
+
+Write your intro here...
+
+---
+
+## Section 1
+
+Content...
+
+---
+
+## Conclusion
+
+Wrap up...
+`,
+  },
 ];
 
 // ─── HELPERS ───────────────────────────────────────

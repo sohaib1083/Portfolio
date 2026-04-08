@@ -6,8 +6,8 @@ import {
   getAllCategories,
   getAllTags,
   formatDate,
-  type BlogPost,
-} from "@/data/blog";
+  type BlogPostData,
+} from "@/lib/blog";
 
 export const metadata: Metadata = {
   title: "Blog — Sohaib Shamsi",
@@ -15,10 +15,12 @@ export const metadata: Metadata = {
     "Technical articles on AI/ML, data engineering, full-stack development, and more by Sohaib Shamsi.",
 };
 
-export default function BlogPage() {
-  const posts = getAllPosts();
-  const categories = getAllCategories();
-  const tags = getAllTags();
+export const dynamic = "force-dynamic";
+
+export default async function BlogPage() {
+  const posts = await getAllPosts();
+  const categories = await getAllCategories();
+  const tags = await getAllTags();
   const featured = posts[0];
   const rest = posts.slice(1);
 
@@ -36,7 +38,7 @@ export default function BlogPage() {
           <div className="relative max-w-6xl mx-auto px-6 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-bg-glass text-text-secondary text-sm mb-6">
               <i className="fa-solid fa-pen-nib text-accent-indigo" />
-              <span>Writing & Thoughts</span>
+              <span>Writing &amp; Thoughts</span>
             </div>
             <h1 className="font-display text-4xl md:text-6xl font-bold mb-4">
               The{" "}
@@ -53,14 +55,15 @@ export default function BlogPage() {
           <div className="flex flex-col lg:flex-row gap-12">
             {/* ─── Main Content ──────────────────────────────── */}
             <div className="flex-1 min-w-0">
-
               {/* Featured Post */}
-              <div className="mb-12">
-                <p className="text-xs font-mono text-accent-cyan uppercase tracking-widest mb-4">
-                  ★ Featured Post
-                </p>
-                <FeaturedCard post={featured} />
-              </div>
+              {featured && (
+                <div className="mb-12">
+                  <p className="text-xs font-mono text-accent-cyan uppercase tracking-widest mb-4">
+                    ★ Featured Post
+                  </p>
+                  <FeaturedCard post={featured} />
+                </div>
+              )}
 
               {/* Latest Posts */}
               {rest.length > 0 && (
@@ -75,12 +78,18 @@ export default function BlogPage() {
                   </div>
                 </div>
               )}
+
+              {posts.length === 0 && (
+                <div className="text-center py-20">
+                  <i className="fa-solid fa-pen-nib text-4xl text-text-muted mb-4 block" />
+                  <p className="text-text-secondary">No posts yet. Check back soon!</p>
+                </div>
+              )}
             </div>
 
             {/* ─── Sidebar ───────────────────────────────────── */}
             <aside className="lg:w-72 shrink-0">
               <div className="sticky top-24 flex flex-col gap-8">
-
                 {/* Categories */}
                 <div className="glass-card p-6">
                   <h3 className="font-display font-semibold text-sm uppercase tracking-widest text-text-secondary mb-4">
@@ -155,7 +164,7 @@ export default function BlogPage() {
 
 // ─── Sub-components ────────────────────────────────
 
-function FeaturedCard({ post }: { post: BlogPost }) {
+function FeaturedCard({ post }: { post: BlogPostData }) {
   return (
     <Link href={`/blog/${post.slug}`} className="group block">
       <div className="glass-card overflow-hidden hover:border-accent-indigo/40 transition-all duration-300 hover:shadow-[0_0_40px_rgba(99,102,241,0.1)]">
@@ -163,9 +172,7 @@ function FeaturedCard({ post }: { post: BlogPost }) {
         <div
           className={`h-48 bg-linear-to-br ${post.coverGradient} relative flex items-center justify-center`}
         >
-          <i
-            className={`${post.coverIcon} text-6xl text-white/20`}
-          />
+          <i className={`${post.coverIcon} text-6xl text-white/20`} />
           <div className="absolute inset-0 bg-linear-to-t from-bg-secondary/80 to-transparent" />
           <div className="absolute bottom-4 left-6 flex gap-2">
             {post.tags.slice(0, 3).map((tag) => (
@@ -206,7 +213,7 @@ function FeaturedCard({ post }: { post: BlogPost }) {
   );
 }
 
-function PostCard({ post }: { post: BlogPost }) {
+function PostCard({ post }: { post: BlogPostData }) {
   return (
     <Link href={`/blog/${post.slug}`} className="group block">
       <div className="glass-card p-6 hover:border-accent-indigo/40 transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.08)]">
