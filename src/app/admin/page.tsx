@@ -196,7 +196,7 @@ export default function AdminPage() {
     } else if (res.status === 401) {
       setAuthed(false);
       sessionStorage.removeItem("admin_secret");
-      setAuthError("Wrong password — please log in again.");
+      setAuthError("Wrong password. Please log in again.");
     } else {
       setStatus({ type: "error", msg: data.error ?? "Something went wrong." });
     }
@@ -283,7 +283,7 @@ export default function AdminPage() {
     } else if (res.status === 401) {
       setAuthed(false);
       sessionStorage.removeItem("admin_secret");
-      setAuthError("Wrong password — please log in again.");
+      setAuthError("Wrong password. Please log in again.");
     } else {
       setStatus({ type: "error", msg: data.error ?? "Update failed." });
     }

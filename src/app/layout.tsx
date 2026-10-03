@@ -1,41 +1,47 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Space_Grotesk } from "next/font/google";
+import { profile } from "@/data/profile";
 import "./globals.css";
 
+const geist = Geist({
+  variable: "--font-geist",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+// Legacy fonts for /blog and /admin, not preloaded so the home page stays light.
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
 });
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
+const description =
+  "I build the systems money moves through: fraud monitoring, data lakehouses and cross-currency payments, end to end.";
 
 export const metadata: Metadata = {
-  title: "Sohaib Shamsi — Full-Stack & AI Engineer",
-  description:
-    "Portfolio of Sohaib Sarosh Shamsi — Full-Stack Developer & AI/ML Engineer building intelligent systems.",
-  keywords: [
-    "Sohaib Shamsi",
-    "AI Engineer",
-    "ML Engineer",
-    "Full-Stack Developer",
-    "Portfolio",
-  ],
-  authors: [{ name: "Sohaib Sarosh Shamsi" }],
+  metadataBase: new URL(profile.site),
+  title: `${profile.name} · ${profile.role}`,
+  description,
+  authors: [{ name: profile.name, url: profile.site }],
   openGraph: {
-    title: "Sohaib Shamsi — Full-Stack & AI Engineer",
-    description:
-      "Full-Stack Engineer & AI/ML Specialist crafting intelligent systems.",
+    title: `${profile.name} · ${profile.role}`,
+    description,
+    url: profile.site,
     type: "website",
   },
 };
@@ -48,16 +54,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
+      className={`${geist.variable} ${geistMono.variable} ${inter.variable} ${spaceGrotesk.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        />
-      </head>
-      <body className="min-h-screen antialiased" suppressHydrationWarning>{children}</body>
+      <body className="min-h-screen" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }

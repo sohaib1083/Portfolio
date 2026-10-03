@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/mongodb";
 import { BlogPost } from "@/lib/models/BlogPost";
 
@@ -46,6 +47,13 @@ export async function getAllTags(): Promise<string[]> {
     for (const t of p.tags ?? []) tagSet.add(t);
   }
   return [...tagSet];
+}
+
+// Pages are cached for an hour; after an admin write, refresh them now instead.
+export function revalidateBlog() {
+  revalidatePath("/");
+  revalidatePath("/blog");
+  revalidatePath("/blog/[slug]", "page");
 }
 
 export function formatDate(iso: string): string {

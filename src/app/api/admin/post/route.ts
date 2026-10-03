@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { BlogPost } from "@/lib/models/BlogPost";
+import { revalidateBlog } from "@/lib/blog";
 
 const SECRET = process.env.ADMIN_SECRET;
 
@@ -70,6 +71,7 @@ export async function POST(request: Request) {
       content: post.content,
     });
 
+    revalidateBlog();
     return NextResponse.json({ success: true, slug });
   } catch (err) {
     console.error("Admin post error:", err);
