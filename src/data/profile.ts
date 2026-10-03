@@ -10,6 +10,9 @@ export const profile = {
   site: "https://sohaib1083.tech",
 };
 
+// Includes private Paysys repos, so it can't be pulled live like the public Tazama stats.
+export const prsShipped = "100+";
+
 export const links = {
   youtube: "https://www.youtube.com/@SohaibShamsi.s",
   medium: "https://medium.com/@sohaib1083",

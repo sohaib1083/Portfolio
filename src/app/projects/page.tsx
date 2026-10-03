@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, Footer, Header, Label, SectionHead } from "@/components/site/Chrome";
-import { links, profile } from "@/data/profile";
+import { links, profile, prsShipped } from "@/data/profile";
 import { production, sideProjects, type ProductionSystem, type SideProject } from "@/data/projects";
 import { getTazamaActivity } from "@/lib/feeds";
 
@@ -107,7 +107,7 @@ export default async function ProjectsPage() {
   const stats = [
     { label: "Production systems", value: production.length },
     { label: "Side projects", value: sideProjects.length },
-    ...(activity ? [{ label: "PRs merged into Tazama", value: activity.merged }] : []),
+    { label: "Pull requests shipped", value: prsShipped },
   ];
 
   return (

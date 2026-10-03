@@ -6,7 +6,7 @@ import Lifecycle from "@/components/site/Lifecycle";
 import SystemFlow from "@/components/site/SystemFlow";
 import { LinkedInTile, WritingTile, YouTubeTile } from "@/components/site/Tiles";
 import Work from "@/components/site/Work";
-import { profile } from "@/data/profile";
+import { profile, prsShipped } from "@/data/profile";
 import { getArticles, getTazamaActivity, getVideos } from "@/lib/feeds";
 import portrait from "../../public/assets/sohaib.jpg";
 
@@ -108,6 +108,10 @@ export default async function Home() {
           <SectionHead index="03" label="Systems · Open source">
             Built in production. <span className="text-accent">Contributed in the open.</span>
           </SectionHead>
+          <p className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="text-5xl font-medium tracking-[-0.04em] text-accent">{prsShipped}</span>
+            <span className="text-muted">pull requests shipped across Paysys and Tazama codebases</span>
+          </p>
           <div className="mt-10">
             <Work activity={activity} />
           </div>

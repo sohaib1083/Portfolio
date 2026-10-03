@@ -92,7 +92,7 @@ export default function Work({ activity }: { activity: OpenSourceActivity | null
               ))}
             </ul>
             <p className="mt-4 font-mono text-[11px] text-muted">
-              {activity.opened} pull requests opened, {activity.merged} merged
+              Public on GitHub: {activity.opened} opened, {activity.merged} merged
             </p>
           </a>
         )}
